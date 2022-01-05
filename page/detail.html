@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js/ajax.js"></script>
+    <link rel="stylesheet" href="../css/main.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <span>detail</span>
+            <b class="key"></b>
+        </header>
+        <section>
+            <nav>
+                <b class="delete">delete</b>
+                <b class="editor">editor</b>
+            </nav>
+            
+        </section>
+    </div>
+    <script>
+        let flag = false;
+        let key = document.querySelector(".key");
+        let nav = document.querySelector("nav");
+        status();
+        key.onclick = function () {
+            flag = !flag;
+            status();
+        };
+        function status() {
+            key.innerHTML = flag ? '▲' : '▼';
+            nav.style.display = flag ? 'flex' : 'none'
+        };
+    </script>
+</body>
+
+</html>

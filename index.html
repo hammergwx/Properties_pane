@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="js/ajax.js"></script>
+    <link rel="stylesheet" href="css/main.css">
+    <title>&</title>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <span>index</span>
+            <b class="add">+</b>
+        </header>
+        <section></section>
+        <div class="mask">
+            <main>
+                <header>
+                    <span>add</span>
+                    <b class="close">×</b>
+                </header>
+                <section>
+                    <p>
+                        <label>fileName</label>
+                        <input class="fileName" type="text">
+                    </p>
+                    <p>
+                        <label>type</label>
+                        <span class="type"> </span>
+                    </p>
+                    <p>
+                        <button class="submit">submit</button>
+                        <button class="back">back</button>
+                    </p>
+                </section>
+            </main>
+        </div>
+    </div>
+    <script>
+        let b;
+        let tab;
+        let text = "";
+        let nav = ['txt', 'doc', 'json', 'js', 'html', 'css'];
+        let add = document.querySelector(".add");
+        let mask = document.querySelector(".mask");
+        let x = document.querySelector(".close");
+        let submit = document.querySelector(".submit");
+        let back = document.querySelector(".back");
+        let fileName = document.querySelector(".fileName");
+        let type = document.querySelector(".type");
+        let main = document.querySelectorAll("section")[0];
+        init();
+        add.onclick = () => status(1);
+        x.onclick = closefn;
+        type.onclick = navtive;
+        fileName.oninput = inputtrim;
+        back.onclick = closefn;
+        submit.onclick = submitfn;
+        main.onclick = jumpfn;
+
+        function jumpfn(e) {
+            let tar = e.target;
+            if (tar.nodeName == 'P') {
+                location.href = "page/detail.html"
+            }
+        };
+
+        function submitfn() {
+            let val = fileName.value;
+            if (!val) {
+                alert('error fileName trim');
+                return false;
+            }
+            if (!text.length) {
+                alert('error type trim');
+                return false;
+            }
+            addList(val + text)
+            closefn();
+        };
+
+        function init() {
+            getList();
+            tymap();
+            tab = 0;
+            fileName.value = "";
+            b = type.querySelectorAll("strong");
+        };
+
+        function closefn() {
+            init();
+            status(0);
+        };
+
+        function tymap() {
+            let str = '';
+            nav.forEach((item, index) => {
+                str += `<strong data-id="${index}">${item}</strong>`;
+            })
+            type.innerHTML = str;
+        };
+
+        function status(a) {
+            console.log(a)
+            if (a == 1) {
+                mask.className += ' active'
+            } else if (a == '') {
+                mask.className = "mask"
+            }
+        };
+
+        function navtive(e) {
+            let tar = e.target;
+            if (tar.nodeName == 'STRONG') {
+                let id = tar.getAttribute("data-id");
+                text = '.' + tar.innerText;
+                b[tab].className = '';
+                tar.className = 'navtive';
+                tab = id;
+            }
+        };
+
+        function inputtrim() {
+            let val = fileName.value.trim();
+            fileName.value = val;
+        };
+
+        function getList() {
+            axios({
+                url: "init",
+                method: "get",
+                data: {},
+                success: (res) => {
+                    listMap(res.data);
+                },
+                error: () => {
+                    console.log('error')
+                }
+            })
+        }
+
+        function addList(f) {
+            axios({
+                url: "add",
+                method: "get",
+                data: {
+                    'fileName': f
+                },
+                success: (res) => {
+                    console.log(res)
+                },
+                error: () => {
+                    console.log('error')
+                }
+            })
+        }
+
+        function listMap(data) {
+            let listData = data ? data : [];
+            let str = '';
+            if (listData.length) {
+                listData.map((item, index) => {
+                    str += `<p data-id="${index}">${item.split(".")[0]}</p>`
+                })
+            } else {
+                str = '<p>no data.</p>'
+            }
+            main.innerHTML = str;
+        }
+    </script>
+</body>
+
+</html>
